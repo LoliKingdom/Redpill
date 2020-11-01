@@ -1,0 +1,15 @@
+[
+{
+  "modid": "redpill",
+  "name": "Redpill",
+  "description": "Rongmario's personal toy.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Rongmario"],
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
