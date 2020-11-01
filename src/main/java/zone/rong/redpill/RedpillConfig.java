@@ -37,11 +37,15 @@ public class RedpillConfig {
         @Config.LangKey("config." + MOD_ID + ".block_state_counter.stateLimit")
         public int stateLimit = 32;
 
+        @Config.Comment("Enable to log names of IUnlistedProperty.")
+        @Config.LangKey("config." + MOD_ID + ".block_state_counter.logUnlistedPropertyNames")
+        public boolean logUnlistedPropertyNames = true;
+
         @Config.Comment("Specify the minimum of IUnlistedProperty each block has to have to be logged.")
         @Config.LangKey("config." + MOD_ID + ".block_state_counter.unlistedPropertiesLimit")
         public int unlistedPropertiesLimit = 1;
 
-        @Config.Comment("Enable to calculate the printed BlockStates' approximate memory footprint. This only works with HotSpot VMs!")
+        @Config.Comment("Enable to calculate the logged BlockStates' approximate memory footprint. This only works on HotSpot VMs!")
         @Config.LangKey("config." + MOD_ID + ".block_state_counter.estimateMemory")
         public boolean estimateMemory = false;
 

@@ -6,6 +6,7 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMap;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.common.Loader;
@@ -53,7 +54,12 @@ public class BlockStateCounter {
                 if (container instanceof IExtendedBlockState) {
                     int extendedStateCount = ((IExtendedBlockState) container).getUnlistedNames().size();
                     if (extendedStateCount >= BLOCKSTATE_COUNTER.unlistedPropertiesLimit) {
-                        Redpill.LOGGER.info("{} has {} unlisted properties.", container.getBlock().getRegistryName(), extendedStateCount);
+                        ResourceLocation blockName = container.getBlock().getRegistryName();
+                        Redpill.LOGGER.info("{} has {} unlisted properties.", blockName, extendedStateCount);
+                        if (BLOCKSTATE_COUNTER.logUnlistedPropertyNames) {
+                            Redpill.LOGGER.warn("Here are the following unlisted properties for {}:", blockName);
+                            ((IExtendedBlockState) container).getUnlistedNames().forEach(p -> Redpill.LOGGER.info(p.getName()));
+                        }
                     }
                 }
             });
