@@ -2,7 +2,7 @@
 {
   "modid": "redpill",
   "name": "Redpill",
-  "description": "Rongmario's personal toy.",
+  "description": "Diagnostic Tool.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
