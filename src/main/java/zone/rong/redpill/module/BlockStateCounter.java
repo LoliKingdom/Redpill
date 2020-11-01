@@ -3,9 +3,11 @@ package zone.rong.redpill.module;
 import jdk.nashorn.internal.ir.debug.ObjectSizeCalculator;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -20,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static zone.rong.redpill.RedpillConfig.BLOCKSTATE_COUNTER;
 
+@SuppressWarnings({"unchecked", "ConstantConditions"})
 public class BlockStateCounter {
 
     private static final Field modelLoader$customStateMappers, stateMap$ignored;
@@ -40,14 +43,23 @@ public class BlockStateCounter {
     }
 
     public static void count() throws Throwable {
-        Loader.instance().getActiveModList().stream().map(ModContainer::getModId).forEach(id -> {
-            final AtomicInteger count = new AtomicInteger(0);
+        Loader.instance().getActiveModList().stream().map(ModContainer::getName).forEach(id -> {
+            final AtomicInteger blocks = new AtomicInteger(0), normalStates = new AtomicInteger(0);
             ForgeRegistries.BLOCKS.getKeys().stream().filter(r -> r.getResourceDomain().equals(id)).forEach(r -> {
-                ForgeRegistries.BLOCKS.getValue(r).getBlockState().getValidStates().forEach(s -> {
-                    count.incrementAndGet();
-                });
+                blocks.incrementAndGet();
+                BlockStateContainer container = ForgeRegistries.BLOCKS.getValue(r).getBlockState();
+                int normalStateSize = container.getValidStates().size();
+                normalStates.addAndGet(normalStateSize);
+                if (container instanceof IExtendedBlockState) {
+                    int extendedStateCount = ((IExtendedBlockState) container).getUnlistedNames().size();
+                    if (extendedStateCount >= BLOCKSTATE_COUNTER.unlistedPropertiesLimit) {
+                        Redpill.LOGGER.info("{} has {} unlisted properties.", container.getBlock().getRegistryName(), extendedStateCount);
+                    }
+                }
             });
-            Redpill.LOGGER.info("{} has {} blockstates.", id, count.get());
+            if (normalStates.get() != 0 || !BLOCKSTATE_COUNTER.disregardZeros) {
+                Redpill.LOGGER.info("{} has {} blockstates from {} total blocks.", id, normalStates.get(), blocks.get());
+            }
         });
         Map<IRegistryDelegate<Block>, IStateMapper> map = (Map<IRegistryDelegate<Block>, IStateMapper>) modelLoader$customStateMappers.get(null);
         ForgeRegistries.BLOCKS.forEach(b -> {
@@ -63,7 +75,7 @@ public class BlockStateCounter {
                             List<IProperty<?>> ignored = (List<IProperty<?>>) stateMap$ignored.get(stateMapper);
                             if (!ignored.isEmpty()) {
                                 for (IProperty<?> property : ignored) {
-                                    Redpill.LOGGER.error("{} has {} property disabled for model generation.", b.getRegistryName(), property);
+                                    Redpill.LOGGER.warn("{} has {} ignored for model generation.", b.getRegistryName(), property);
                                 }
                             }
                         } catch (Throwable throwable) {

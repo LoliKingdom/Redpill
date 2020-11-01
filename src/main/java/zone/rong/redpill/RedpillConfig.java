@@ -29,11 +29,19 @@ public class RedpillConfig {
         @Config.LangKey("config." + MOD_ID + ".block_state_counter.enable")
         public boolean enable = true;
 
-        @Config.Comment("Specify the minimum of BlockStates each block has to have to print to log. This is to stop blocks with simple BlockStateContainers from being printed")
-        @Config.LangKey("config." + MOD_ID + ".block_state_counter.stateLimit")
-        public int stateLimit = 16;
+        @Config.Comment("Enable to stop those mods with no registered blocks to be logged")
+        @Config.LangKey("config." + MOD_ID + ".block_state_counter.disregardZeros")
+        public boolean disregardZeros = true;
 
-        @Config.Comment("For each BlockState logged, calculate its approximate memory footprint. This only works with HotSpot VMs!")
+        @Config.Comment("Specify the minimum of BlockStates each block has to have to be logged. This is to stop blocks with simple BlockStateContainers from being printed")
+        @Config.LangKey("config." + MOD_ID + ".block_state_counter.stateLimit")
+        public int stateLimit = 32;
+
+        @Config.Comment("Specify the minimum of IUnlistedProperty each block has to have to be logged.")
+        @Config.LangKey("config." + MOD_ID + ".block_state_counter.unlistedPropertiesLimit")
+        public int unlistedPropertiesLimit = 1;
+
+        @Config.Comment("Enable to calculate the printed BlockStates' approximate memory footprint. This only works with HotSpot VMs!")
         @Config.LangKey("config." + MOD_ID + ".block_state_counter.estimateMemory")
         public boolean estimateMemory = false;
 
