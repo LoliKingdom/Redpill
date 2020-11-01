@@ -28,6 +28,8 @@ public class BlockStateCounter {
 
     private static final Field modelLoader$customStateMappers, stateMap$ignored;
 
+    private static ObjectSizeCalculator calculator;
+
     static {
         Field customStateMappers = null;
         Field ignored = null;
@@ -72,7 +74,10 @@ public class BlockStateCounter {
             if (b.getBlockState().getValidStates().size() > BLOCKSTATE_COUNTER.stateLimit) {
                 Redpill.LOGGER.warn("{} has {} blockstates", b.getRegistryName(), b.getBlockState().getValidStates().size());
                 if (BLOCKSTATE_COUNTER.estimateMemory) {
-                    Redpill.LOGGER.warn("That is approximately {} bytes taken up,", new ObjectSizeCalculator(ObjectSizeCalculator.getEffectiveMemoryLayoutSpecification()).calculateObjectSize(b.getBlockState()));
+                    if (calculator == null) {
+                        calculator = new ObjectSizeCalculator(ObjectSizeCalculator.getEffectiveMemoryLayoutSpecification());
+                    }
+                    Redpill.LOGGER.warn("That is approximately {} bytes taken up,", calculator.calculateObjectSize(b.getBlockState()));
                 }
                 if (map.containsKey(b.delegate)) {
                     IStateMapper stateMapper = map.get(b.delegate);
