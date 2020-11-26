@@ -28,7 +28,7 @@ public class Redpill {
     }
 
     @Mod.EventHandler
-    public void loadComplete(FMLLoadCompleteEvent event) throws Throwable {
+    public void loadComplete(FMLLoadCompleteEvent event) {
         if (RedpillConfig.BLOCKSTATE_COUNTER.enable) {
             BlockStateCounter.count();
         }

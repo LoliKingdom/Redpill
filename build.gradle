@@ -17,7 +17,7 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.0'
+version = '1.1'
 group = 'zone.rong.redpill' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'redpill'
 
@@ -27,46 +27,7 @@ minecraft {
 	version = "1.12.2-14.23.5.2847"
     runDir = "run"
     mappings = "snapshot_20171003"
-    def args = [
-            '-Dfml.coreMods.load=zone.rong.redpill.RedpillLoadingPlugin',
-            '-Dmixin.hotSwap=true',
-            '-Dmixin.checks.interfaces=true'
-    ]
-    clientJvmArgs.addAll(args)
-    serverJvmArgs.addAll(args)
     makeObfSourceJar = false
-}
-
-configurations {
-    embed
-    implementation.extendsFrom(embed)
-}
-
-repositories {
-    maven {
-        url "https://repo.spongepowered.org/maven"
-    }
-}
-
-dependencies {
-    embed ("org.spongepowered:mixin:0.8.1-SNAPSHOT") {
-        transitive = false
-    }
-}
-
-// Example for how to get properties into the manifest for reading by the runtime..
-jar {
-    from (configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }) {
-        exclude 'LICENSE.txt', 'META-INF/MANIFSET.MF', 'META-INF/maven/**', 'META-INF/*.RSA', 'META-INF/*.SF'
-    }
-    manifest {
-        attributes([
-                "FMLCorePluginContainsFMLMod": true,
-                "FMLCorePlugin": 'zone.rong.redpill.RedpillLoadingPlugin',
-                "ForceLoadAsMod": true,
-                "TweakClass": 'org.spongepowered.asm.launch.MixinTweaker'
-        ])
-    }
 }
 
 sourceSets {
